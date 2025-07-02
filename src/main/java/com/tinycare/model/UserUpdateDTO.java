@@ -1,50 +1,31 @@
 package com.tinycare.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@Entity
-@Table(name = "users")
-public class User {
+public class UserUpdateDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "Name is required")
     private String name;
 
     @Email(message = "Invalid email format")
     @NotBlank(message = "Email is required")
-    @Column(unique = true)
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    // Password is optional during update
     private String password;
 
-    public User() {
+    // Constructors
+    public UserUpdateDTO() {
     }
 
-    public User(Long id, String name, String email, String password) {
-        this.id = id;
+    public UserUpdateDTO(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    // Getters and setters
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getters & Setters
     public String getName() {
         return name;
     }
