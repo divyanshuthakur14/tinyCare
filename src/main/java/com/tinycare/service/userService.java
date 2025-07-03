@@ -30,4 +30,16 @@ public class userService {
 
         return userRepository.save(user);
     }
+
+    public User loginUser(String email, String rawPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid credentials"));
+
+        if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
+            throw new ResourceNotFoundException("Invalid credentials");
+        }
+
+        return user;
+    }
+
 }

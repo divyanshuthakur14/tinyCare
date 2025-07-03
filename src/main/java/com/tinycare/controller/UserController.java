@@ -1,9 +1,12 @@
 package com.tinycare.controller;
 
+import com.tinycare.dto.LoginRequestDTO;
+import com.tinycare.dto.LoginResponseDTO;
 import com.tinycare.dto.UserDTO;
 import com.tinycare.model.User;
 import com.tinycare.model.UserUpdateDTO;
 import com.tinycare.repository.UserRepository;
+import com.tinycare.security.JwtUtil;
 import com.tinycare.service.userService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,18 @@ public class UserController {
         User updatedUser = userService.updateUser(id, dto);
         return ResponseEntity.ok(new UserDTO(updatedUser));
     }
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO) {
+        User user = userService.loginUser(loginDTO.getEmail(), loginDTO.getPassword());
+        String token = jwtUtil.generateToken(user.getEmail());
+        System.out.println("Login attempt for email: " + loginDTO.getEmail());
+        return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
 
 
 }
