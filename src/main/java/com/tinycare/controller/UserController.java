@@ -32,8 +32,15 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Set default role if none provided
+        if (user.getRole() == null) {
+            user.setRole(com.tinycare.model.Role.USER);
+        }
+
         return userRepo.save(user);
     }
+
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -61,10 +68,24 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginDTO) {
         User user = userService.loginUser(loginDTO.getEmail(), loginDTO.getPassword());
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user); // pass the whole User object
         System.out.println("Login attempt for email: " + loginDTO.getEmail());
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
+
+    // Accessible to USER and ADMIN
+    @GetMapping("/user/dashboard")
+    public String userDashboard() {
+        return "Welcome to USER Dashboard";
+    }
+
+    // Accessible to ADMIN only
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard() {
+        return "Welcome to ADMIN Dashboard";
+    }
+
+
 
 
 
