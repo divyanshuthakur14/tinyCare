@@ -3,6 +3,7 @@ package com.tinycare.controller;
 import com.tinycare.dto.LoginRequestDTO;
 import com.tinycare.dto.LoginResponseDTO;
 import com.tinycare.dto.UserDTO;
+import com.tinycare.exception.ResourceNotFoundException;
 import com.tinycare.model.User;
 import com.tinycare.model.UserUpdateDTO;
 import com.tinycare.repository.UserRepository;
@@ -12,6 +13,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,12 +45,20 @@ public class UserController {
         return userRepo.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        UserDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
 
     @GetMapping
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         if (!userRepo.existsById(id)) {
@@ -73,20 +85,25 @@ public class UserController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
-    // Accessible to USER and ADMIN
+
     @GetMapping("/user/dashboard")
     public String userDashboard() {
         return "Welcome to USER Dashboard";
     }
 
-    // Accessible to ADMIN only
+
     @GetMapping("/admin/dashboard")
     public String adminDashboard() {
         return "Welcome to ADMIN Dashboard";
     }
 
-
-
-
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = auth.getName(); // email stored in token
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return ResponseEntity.ok(new UserDTO(user));
+    }
 
 }

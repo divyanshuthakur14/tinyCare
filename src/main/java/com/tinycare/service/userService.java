@@ -1,5 +1,6 @@
 package com.tinycare.service;
 
+import com.tinycare.dto.UserDTO;
 import com.tinycare.exception.ResourceNotFoundException;
 import com.tinycare.model.User;
 import com.tinycare.model.UserUpdateDTO;
@@ -14,6 +15,7 @@ public class userService {
     @Autowired
     private UserRepository userRepository;
 
+    private UserDTO userdto;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -30,6 +32,14 @@ public class userService {
 
         return userRepository.save(user);
     }
+
+
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return new UserDTO(user);
+    }
+
 
     public User loginUser(String email, String rawPassword) {
         User user = userRepository.findByEmail(email)

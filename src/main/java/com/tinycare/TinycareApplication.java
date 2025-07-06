@@ -9,5 +9,4 @@ public class TinycareApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TinycareApplication.class, args);
 	}
-
 }
