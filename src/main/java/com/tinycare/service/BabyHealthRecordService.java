@@ -87,5 +87,20 @@ public class BabyHealthRecordService {
         babyRepo.delete(baby);
     }
 
+    public List<BabyHealthRecordDTO> searchByName(String name, Long userId) {
+        List<BabyHealthRecord> records = babyRepo.findByUserIdAndBabyNameContainingIgnoreCase(userId, name);
+        return records.stream().map(BabyHealthRecordDTO::new).toList();
+    }
+
+    public List<BabyHealthRecordDTO> searchByAge(Integer age, Long userId) {
+        List<BabyHealthRecord> records = babyRepo.findByUserIdAndAgeInMonths(userId, age);
+        List<BabyHealthRecord> all = babyRepo.findByUserId(userId);
+        for (BabyHealthRecord b : all) {
+            System.out.println("Found: " + b.getBabyName() + " - " + b.getAgeInMonths());
+        }
+        return records.stream().map(BabyHealthRecordDTO::new).toList();
+    }
+
+
 
 }

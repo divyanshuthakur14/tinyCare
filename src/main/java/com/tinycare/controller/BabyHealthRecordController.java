@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import com.tinycare.model.User;
+import com.tinycare.service.userService;
 
 import java.util.List;
 
@@ -15,6 +17,12 @@ public class BabyHealthRecordController {
 
     @Autowired
     private BabyHealthRecordService babyService;
+    private userService userservice;
+
+    public BabyHealthRecordController(BabyHealthRecordService babyService, userService userservice) {
+        this.babyService = babyService;
+        this.userservice = userservice;
+    }
 
     @PostMapping
     public ResponseEntity<?> createBabyRecord(@RequestBody BabyHealthRecordDTO dto) {
@@ -44,6 +52,24 @@ public class BabyHealthRecordController {
         babyService.deleteBaby(id, email);
         return ResponseEntity.ok("Baby record deleted");
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BabyHealthRecordDTO>> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer age,
+            Authentication authentication) {
+
+        User user = userservice.getUserByEmail(authentication.getName());
+
+        if (name != null) {
+            return ResponseEntity.ok(babyService.searchByName(name, user.getId()));
+        } else if (age != null) {
+            return ResponseEntity.ok(babyService.searchByAge(age, user.getId()));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
 
 }
