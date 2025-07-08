@@ -1,4 +1,4 @@
-package com.tinycare.model;
+package com.tinycare.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -3,7 +3,7 @@ package com.tinycare.service;
 import com.tinycare.dto.UserDTO;
 import com.tinycare.exception.ResourceNotFoundException;
 import com.tinycare.model.User;
-import com.tinycare.model.UserUpdateDTO;
+import com.tinycare.dto.UserUpdateDTO;
 import com.tinycare.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
