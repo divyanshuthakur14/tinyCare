@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8282", // Update if backend is deployed
+  baseURL: "https://tinycarebackend-ubpd.onrender.com", // Update if backend is deployed
 });
 
 instance.interceptors.request.use((config) => {
